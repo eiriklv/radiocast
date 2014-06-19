@@ -9,6 +9,7 @@ process.on('uncaughtException', function (err) {
 var fs = require('fs');
 var request = require('request');
 var avconv = require('avconv');
+var mm = require('musicmetadata');
 var util = require('util');
 var exec = require('child_process').exec;
 var pifm;
@@ -69,14 +70,29 @@ Player.prototype.play = function (stream) {
     });
 }
 
+// publish meta data
+Player.prototype.publishData = function (file) {
+    // create a new parser from a node ReadStream
+    var parser = mm(file);
+
+    // listen for the metadata event
+    parser.on('metadata', function (result) {
+        console.log('playing : ' + result.artist + ' - ' + result.title);
+        // console.log(result);
+    });
+}
+
 // convert a song
 Player.prototype.convert = function (url) {
     console.log('converting....')
 
     var input = fs.createReadStream(this.tempInput);
+    var meta = fs.createReadStream(this.tempInput);
     var stream = avconv(this.params);
 
     this.play(stream);
+
+    this.publishData(meta);
 
     input.pipe(stream);
 };
