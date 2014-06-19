@@ -38,7 +38,7 @@ function Player (source, params, tempInput, tempOutput) {
 };
 
 // play a song
-Player.prototype.play = function (stream) {
+Player.prototype.play = function (stream, meta) {
     // When the conversion finishes, start the broadcasting
     stream.once('exit', function (exitCode, signal) {
         pifm = exec('./pifm ' + this.tempOutput + ' 103.0 44100 stereo', function (error, stdout, stderr) {
@@ -112,7 +112,7 @@ Player.prototype.download = function (url) {
     var req = request(url).pipe(output);
 
     req.on('close', function () {
-        console.log('finished downloading');
+        console.log('closed request');
     });
 };
 
