@@ -9,7 +9,6 @@ process.on('uncaughtException', function (err) {
 var fs = require('fs');
 var request = require('request');
 var avconv = require('avconv');
-var mm = require('musicmetadata');
 var util = require('util');
 var exec = require('child_process').exec;
 var pifm;
@@ -47,27 +46,26 @@ Player.prototype.play = function (stream) {
             }
 
             console.log('finished playing the song - skipping to next in queue');
+
             stream = null;
             this.next() // - download, convert and play the next song
         }.bind(this));
 
+        console.log('finished converting file');
+        console.log('playing it on radio!');
+
     }.bind(this));
 
-    // get progress (does not work ATM)
-    stream.on('progress', function (progress) {
+    // get meta data
+    stream.on('meta', function (meta) {
+        console.log('found meta data:');
+        console.log(util.inspect(meta));
+    });
+
+    // get progress
+    stream.on('meta', function (progress) {
         console.log('progress: ');
         console.log(util.inspect(progress));
-    });
-}
-
-Player.prototype.publishData = function (file) {
-    // create a new parser from a node ReadStream
-    var parser = mm(file);
-
-    // listen for the metadata event
-    parser.on('metadata', function (result) {
-        console.log('playing : ' + result.artist + ' - ' + result.title);
-        // console.log(result);
     });
 }
 
@@ -79,8 +77,6 @@ Player.prototype.convert = function (url) {
     var stream = avconv(this.params);
 
     this.play(stream);
-
-    this.publishData(input);
 
     input.pipe(stream);
 };
@@ -149,3 +145,4 @@ setTimeout(function () {
 setTimeout(function () {
     source.add('https://www.dropbox.com/s/2yw1eelgj13l3b8/04%20-%20Kings%20Of%20Leon%20-%20Beautiful%20War.mp3?dl=1');
 }.bind(this), 5000);
+
