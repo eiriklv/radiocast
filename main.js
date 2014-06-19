@@ -55,6 +55,9 @@ Player.prototype.play = function (stream) {
         console.log('finished converting file');
         console.log('playing it on radio!');
 
+        // get meta and print it
+        this.publishData(meta);
+
     }.bind(this));
 
     // get meta data
@@ -90,9 +93,7 @@ Player.prototype.convert = function (url) {
     var meta = fs.createReadStream(this.tempInput);
     var stream = avconv(this.params);
 
-    this.play(stream);
-
-    this.publishData(meta);
+    this.play(stream, meta);
 
     input.pipe(stream);
 };
