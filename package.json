@@ -1,0 +1,16 @@
+{
+    "name": "radiocast",
+    "main": "main.js",
+    "engines": {
+        "node": "0.10.x"
+    },
+    "version": "0.3.0",
+    "description": "My own radio channel with a music queue",
+    "dependencies": {
+        "avconv": "~2.0.0",
+        "musicmetadata": "~0.4.0",
+        "request": "~2.36.0",
+        "speaker": "~0.1.3"
+    },
+    "author": "Eirik Vullum <eirik@evconsult.no> (http://www.evconsult.no/)"
+}
